@@ -4,17 +4,19 @@ from xml.etree import ElementTree
 from glob import glob
 from sys import stderr
 
-print(['color_schemes'])
+print("[color_schemes]")
 names = []
 for filename in sorted(glob('eclipse-color-theme-master/com.github.eclipsecolortheme/themes/*.xml')):
     root = ElementTree.parse(filename).getroot()
-    names.append(root.attrib['name'])
+    names.append(root.attrib['name'].lower().replace(' ', '/'))
 print("names = ['{}']".format("', '".join(names)))
+print("selected = {}".format(names[0]))
     
 errors = []
 for filename in sorted(glob('eclipse-color-theme-master/com.github.eclipsecolortheme/themes/*.xml')):
     root = ElementTree.parse(filename).getroot()
-    name = root.attrib['name'].lower().replace(' ', '/')
+    fullname = root.attrib['name']
+    name = fullname.lower().replace(' ', '/')
 
     background = None
     currentline = None
@@ -152,6 +154,7 @@ for filename in sorted(glob('eclipse-color-theme-master/com.github.eclipsecolort
     if instance == None:
         errors.append('ERROR: Missing instance for {}'.format(name))
 
+    print("{}/name = {}".format(name, fullname))
     print("{}/background = {}".format(name, background))
     print("{}/currentline = {}".format(name, currentline))
     print("{}/occurence = {}".format(name, occurence))
