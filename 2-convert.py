@@ -4,19 +4,32 @@ from xml.etree import ElementTree
 from glob import glob
 from sys import stderr
 
-print("[color_schemes]")
+existing = ['emacs', 'idle', 'monokai', 'pydev', 'scintilla',
+            'spyder', 'spyder/dark', 'zenburn', 'solarized/light',
+            'solarized/dark']
 names = []
 for filename in sorted(glob('eclipse-color-theme-master/com.github.eclipsecolortheme/themes/*.xml')):
     root = ElementTree.parse(filename).getroot()
-    names.append(root.attrib['name'].lower().replace(' ', '/'))
-print("names = ['{}']".format("', '".join(names)))
-print("selected = {}".format(names[0]))
+    name = root.attrib['name'].lower().replace(' ', '/')
+    if name in existing:
+        continue
+    if name == 'sublime/text/monokai/extended':
+        name = 'sublime/text/monokai/ext'
+    
+    names.append(name)
+
+print(", '{}'".format("', '".join(names)))
+print()
     
 errors = []
 for filename in sorted(glob('eclipse-color-theme-master/com.github.eclipsecolortheme/themes/*.xml')):
     root = ElementTree.parse(filename).getroot()
     fullname = root.attrib['name']
     name = fullname.lower().replace(' ', '/')
+    if name in existing:
+        continue
+    if name == 'sublime/text/monokai/extended':
+        name = 'sublime/text/monokai/ext'
 
     background = None
     currentline = None
@@ -154,23 +167,27 @@ for filename in sorted(glob('eclipse-color-theme-master/com.github.eclipsecolort
     if instance == None:
         errors.append('ERROR: Missing instance for {}'.format(name))
 
-    print("{}/name = {}".format(name, fullname))
-    print("{}/background = {}".format(name, background))
-    print("{}/currentline = {}".format(name, currentline))
-    print("{}/occurence = {}".format(name, occurence))
-    print("{}/ctrlclick = {}".format(name, ctrlclick))
-    print("{}/sideareas = {}".format(name, sideareas))
-    print("{}/matched_p = {}".format(name, matched_p))
-    print("{}/unmatched_p = {}".format(name, unmatched_p))
+    w = len(name) + 15
+    print("              # ---- {} (converted Eclipse color theme) ----".format(fullname))
+    print("              {a: <{b}} \"{c}\",".format(a="'{}/name':".format(name), b=w, c=fullname))
+    print("              #      Name       {a: <{b}}Color     Bold  Italic".format(a=' ', b=w-15))
+
+    print("              {a: <{b}} \"{c}\",".format(a="'{}/background':".format(name), b=w, c=background))
+    print("              {a: <{b}} \"{c}\",".format(a="'{}/currentline':".format(name), b=w, c=currentline))
+    print("              {a: <{b}} \"{c}\",".format(a="'{}/occurence':".format(name), b=w, c=occurence))
+    print("              {a: <{b}} \"{c}\",".format(a="'{}/ctrlclick':".format(name), b=w, c=ctrlclick))
+    print("              {a: <{b}} \"{c}\",".format(a="'{}/sideareas':".format(name), b=w, c=sideareas))
+    print("              {a: <{b}} \"{c}\",".format(a="'{}/matched_p':".format(name), b=w, c=matched_p))
+    print("              {a: <{b}} \"{c}\",".format(a="'{}/unmatched_p':".format(name), b=w, c=unmatched_p))
     
-    print("{}/normal = ('{}', {}, {})".format(name, normal, normal_bold, normal_italic))
-    print("{}/keyword = ('{}', {}, {})".format(name, keyword, keyword_bold, keyword_italic))
-    print("{}/builtin = ('{}', {}, {})".format(name, builtin, builtin_bold, builtin_italic))
-    print("{}/definition = ('{}', {}, {})".format(name, definition, definition_bold, definition_italic))
-    print("{}/comment = ('{}', {}, {})".format(name, comment, comment_bold, comment_italic))
-    print("{}/string = ('{}', {}, {})".format(name, string, string_bold, string_italic))
-    print("{}/number = ('{}', {}, {})".format(name, number, number_bold, number_italic))
-    print("{}/instance = ('{}', {}, {})".format(name, instance, instance_bold, instance_italic))
+    print("              {a: <{b}}('{c}', {d}, {e}),".format(a="'{}/normal':".format(name), b=w, c=normal, d=normal_bold, e=normal_italic))
+    print("              {a: <{b}}('{c}', {d}, {e}),".format(a="'{}/keyword':".format(name), b=w, c=keyword, d=keyword_bold, e=keyword_italic))
+    print("              {a: <{b}}('{c}', {d}, {e}),".format(a="'{}/builtin':".format(name), b=w, c=builtin, d=builtin_bold, e=builtin_italic))
+    print("              {a: <{b}}('{c}', {d}, {e}),".format(a="'{}/definition':".format(name), b=w, c=definition, d=definition_bold, e=definition_italic))
+    print("              {a: <{b}}('{c}', {d}, {e}),".format(a="'{}/comment':".format(name), b=w, c=comment, d=comment_bold, e=comment_italic))
+    print("              {a: <{b}}('{c}', {d}, {e}),".format(a="'{}/string':".format(name), b=w, c=string, d=string_bold, e=string_italic))
+    print("              {a: <{b}}('{c}', {d}, {e}),".format(a="'{}/number':".format(name), b=w, c=number, d=number_bold, e=number_italic))
+    print("              {a: <{b}}('{c}', {d}, {e}),".format(a="'{}/instance':".format(name), b=w, c=instance, d=instance_bold, e=instance_italic))
     
 for error in errors:
     print(error, file=stderr)
