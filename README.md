@@ -1,6 +1,7 @@
 # convert-theme-to-scheme
 
-Convert Eclipse themes to Spyder color schemes.
+Convert Eclipse themes to [Spyder](https://github.com/spyder-ide/spyder/)
+color schemes.
 
 The follwing command downloads the Elcipse themes.
 
